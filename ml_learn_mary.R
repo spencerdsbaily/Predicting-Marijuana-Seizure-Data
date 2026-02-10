@@ -67,7 +67,7 @@ na_table <- train_baked %>%
   pivot_longer(cols = everything(), names_to = "variable", values_to = "n_missing") %>%
   arrange(desc(n_missing))
 
-print(na_table)   # inspect this; you'll see where NAs are
+print(na_table)   
 
 # now drop rows that have NA in key modeling variables (safe and explicit)
 train_baked_clean <- train_baked %>%
@@ -76,11 +76,6 @@ train_baked_clean <- train_baked %>%
 test_baked_clean <- test_baked %>%
   drop_na(kilos_int, n_groups, log_pop, year, mun)
 
-# quick before/after counts
-cat("Rows: train original =", nrow(train_baked), 
-    " | train clean =", nrow(train_baked_clean), "\n")
-cat("Rows: test original  =", nrow(test_baked), 
-    " | test clean  =", nrow(test_baked_clean), "\n")
 
 # -----------------------------
 # Fit Negative Binomial with year fixed effects (on cleaned data)
@@ -89,7 +84,7 @@ cat("Rows: test original  =", nrow(test_baked),
 predictors <- setdiff(names(train_baked_clean), c("kilos_int", "mun", "year"))
 fmla <- as.formula(paste("kilos_int ~", paste(predictors, collapse = " + "), "+ factor(year)"))
 
-# fit via MASS::glm.nb (no library(MASS) required)
+# fit via MASS::glm.nb
 nb_fit <- MASS::glm.nb(fmla, data = train_baked_clean)
 print(summary(nb_fit))
 
@@ -105,14 +100,6 @@ stopifnot(!any(is.na(train_baked_clean$mun)))
 vcov_clust <- vcovCL(nb_fit, cluster = train_baked_clean$mun)
 coeftest(nb_fit, vcov = vcov_clust) -> clustered_coef_table
 
-# optional: tidy for programmatic use (requires broom)
-if (requireNamespace("broom", quietly = TRUE)) {
-  robust_coef_table <- broom::tidy(clustered_coef_table)
-} else {
-  robust_coef_table <- as.data.frame(clustered_coef_table)
-}
-
-print(robust_coef_table)
 
 # -----------------------------
 # Predict & evaluate on cleaned test set
