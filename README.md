@@ -1,23 +1,27 @@
 # Predicting Marijuana Seizure Volumes in Mexico
 
-This project analyzes municipality–year variation in marijuana seizure volumes
-using a negative binomial regression model. The outcome data (marijuana seizures by state, 
-year, and municipality) is a brand new dataset obtained from the government
-of Mexico. The goal is to understand how cartel presence relates to the 
-quantity of drugs seized, controlling for population size.
+This project applies a supervised machine learning workflow in R to model
+municipality–year variation in marijuana seizure volumes, using a negative
+binomial regression as the core predictive model. The outcome data (marijuana
+seizures by state, year, and municipality) come from a newly compiled dataset
+obtained from the government of Mexico. The goal is to understand how cartel
+presence relates to the quantity of drugs seized, controlling for population
+size.
 
 The project is designed as a reproducible, end-to-end analysis suitable for
-policy research, applied data science, and academia.
+policy research, applied data science, and academic settings.
 
 
 ## Project Motivation
 
-This project was created to build practical experience with the `tidymodels`
-machine learning framework in R. I focused on implementing a complete modeling
-pipeline on a real-world dataset, emphasizing clean preprocessing, reproducible
-splits, model evaluation on held-out data, and clear interpretation of results.
+The project adopts a machine learning perspective, treating the negative
+binomial model as a predictive learner trained on a subset of the data and
+evaluated on held-out observations. The emphasis is on implementing a complete
+modeling pipeline on a real-world dataset, including preprocessing, reproducible
+train/test splits, model evaluation on held-out data, and clear interpretation
+of results.
 
-The emphasis is on workflow design and transparency rather than algorithmic
+The focus is on workflow design and transparency rather than algorithmic
 complexity.
 
 ---
@@ -40,31 +44,42 @@ that data are placed in a `data/` directory at the project root.
 
 ## Methods
 
-- Outcome: kilograms seized (rounded to nearest integer)
+- Outcome: kilograms of marijuana seized (rounded to the nearest kilogram)
 - Model: negative binomial regression (to account for overdispersion)
 - Predictors:
-  - Number of cartel groups
+  - Number of cartel groups operating in a municipality–year
   - Log population
+- Fixed effects: year fixed effects to account for national shocks and time trends
+- Inference: cluster-robust standard errors at the municipality level
 - Train/test split stratified on outcome quantiles
 - Evaluation metrics: MAE and RMSE on held-out test data
 
-All preprocessing and modeling steps are implemented using the `tidymodels`
-ecosystem, with model estimation performed via `MASS::glm.nb()`.
+All preprocessing and model fitting are implemented using the `tidymodels`
+ecosystem, with model estimation via `MASS::glm.nb()`.
 
 ---
 
 ## Key Result
 
-Holding population constant, each additional cartel group operating in a
-municipality is associated with an approximately **25–30% increase in expected
-seizure volume**.
+
+Holding population constant and controlling for year fixed effects, each
+additional cartel group operating in a municipality is associated with an
+approximately **70–75% increase in expected marijuana seizure volume**
+(\(e^{0.56} \approx 1.75\)).
+
+Seizure volumes also exhibit strong time variation, with substantially lower
+expected seizure levels in later years relative to the baseline year, consistent
+with national-level shifts.
 
 ---
 
 ## Predicted Effects
 
-![Predicted seizure volume by cartel presence](figures/marginal_effects.png)
+The figure below shows model-based predictions from the negative binomial model
+with year fixed effects. Expected seizure volume increases sharply with the
+number of cartel groups (unsupringly), holding population at its median value.
 
+![Predicted seizure volume by cartel presence](figures/marginal_effects.png)
 
 ## Repository Structure
 
