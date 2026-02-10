@@ -61,5 +61,10 @@ seizure volume**.
 
 ---
 
+## Predicted Effects
+
+![Predicted seizure volume by cartel presence](figures/marginal_effects.png)
+
+
 ## Repository Structure
 
