@@ -5,8 +5,8 @@ municipality–year variation in marijuana seizure volumes, using a negative
 binomial regression as the core predictive model. The outcome data (marijuana
 seizures by state, year, and municipality) come from a newly compiled dataset
 obtained from the government of Mexico. The goal is to understand how cartel
-presence relates to the quantity of drugs seized, controlling for population
-size.
+presence (using data from Esberg 2025) relates to the quantity of drugs seized, 
+controlling for population size.
 
 The project is designed as a reproducible, end-to-end analysis suitable for
 policy research, applied data science, and academic settings.
@@ -29,7 +29,8 @@ complexity.
 ## Data
 
 The analysis combines three sources:
-- **Cartel presence data**: number of distinct cartel groups operating in each municipality–year
+- **Cartel presence data**: number of distinct cartel groups operating in each 
+municipality–year (Esberg 2025)
 - **Population data**: municipality–year population totals
 - **Seizure data**: kilograms of marijuana seized by authorities
 
@@ -47,7 +48,7 @@ that data are placed in a `data/` directory at the project root.
 - Outcome: kilograms of marijuana seized (rounded to the nearest kilogram)
 - Model: negative binomial regression (to account for overdispersion)
 - Predictors:
-  - Number of cartel groups operating in a municipality–year
+  - Number of cartel groups operating in a municipality–year (Esberg 2025)
   - Log population
 - Fixed effects: year fixed effects to account for national shocks and time trends
 - Inference: cluster-robust standard errors at the municipality level
@@ -77,9 +78,14 @@ with national-level shifts.
 
 The figure below shows model-based predictions from the negative binomial model
 with year fixed effects. Expected seizure volume increases sharply with the
-number of cartel groups (unsupringly), holding population at its median value.
+number of cartel groups (unsurprisingly), holding population at its median value.
 
 ![Predicted seizure volume by cartel presence](figures/marginal_effects.png)
 
 ## Repository Structure
 
+## Reference
+
+Esberg, Jane. 2025. “Criminal Fragmentation in Mexico.” 
+*Political Science Research and Methods*. 
+https://doi.org/10.1017/psrm.2025.4
